@@ -86,13 +86,13 @@ loadSong(songs[currentSong]);
 function updateProgressBar(e) {
   if (isPlaying) {
     const { duration, currentTime } = e.srcElement;
-    setProgressBar(currentTime, duration);
+    setProgressBarHtmlElement(currentTime, duration);
     calculateDuration(duration);
     calulateCurrentTime(currentTime);
   }
 }
 
-function setProgressBar(currentTime, duration) {
+function setProgressBarHtmlElement(currentTime, duration) {
   const progressPercent = (currentTime / duration) * 100;
   progress.style.width = `${progressPercent}%`;
 }
@@ -115,6 +115,15 @@ function calulateCurrentTime(currentTime) {
   }
 }
 
+function setProgressBar(e) {
+  const width = e.srcElement.clientWidth;
+  const clickX = e.offsetX;
+  const { duration } = music;
+  music.currentTime = (clickX / width) * duration;
+}
+
 prevBtn.addEventListener('click', prevSong);
 nextBtn.addEventListener('click', nextSong);
+music.addEventListener('ended', nextSong);
 music.addEventListener('timeupdate', updateProgressBar);
+progressContainer.addEventListener('click', setProgressBar);
