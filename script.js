@@ -2,6 +2,10 @@ const image = document.querySelector('img');
 const title = document.getElementById('title');
 const artist = document.getElementById('artist');
 const music = document.querySelector('audio');
+const progressContainer = document.getElementById('progress-container');
+const progress = document.getElementById('progress');
+const currentTimeEl = document.getElementById('current-time');
+const durationEl = document.getElementById('duration');
 const prevBtn = document.getElementById('prev');
 const playBtn = document.getElementById('play');
 const nextBtn = document.getElementById('next');
@@ -71,13 +75,46 @@ function nextSong() {
   updatePlayer();
 }
 
+function updatePlayer() {
+  pauseSong();
+  loadSong(songs[currentSong]);
+  playSong();
+}
+
 loadSong(songs[currentSong]);
+
+function updateProgressBar(e) {
+  if (isPlaying) {
+    const { duration, currentTime } = e.srcElement;
+    setProgressBar(currentTime, duration);
+    calculateDuration(duration);
+    calulateCurrentTime(currentTime);
+  }
+}
+
+function setProgressBar(currentTime, duration) {
+  const progressPercent = (currentTime / duration) * 100;
+  progress.style.width = `${progressPercent}%`;
+}
+
+function calculateDuration(duration) {
+  const durationMinutes = Math.floor(duration / 60);
+  let durationSecounds = Math.floor(duration % 60);
+  if (durationSecounds < 10) durationSecounds = '0' + durationSecounds;
+  if (durationSecounds) {
+    durationEl.textContent = `${durationMinutes}:${durationSecounds}`;
+  }
+}
+
+function calulateCurrentTime(currentTime) {
+  const currentMinutes = Math.floor(currentTime / 60);
+  let currentSecounds = Math.floor(currentTime % 60);
+  if (currentSecounds < 10) currentSecounds = '0' + currentSecounds;
+  if (currentSecounds) {
+    currentTimeEl.textContent = `${currentMinutes}:${currentSecounds}`;
+  }
+}
 
 prevBtn.addEventListener('click', prevSong);
 nextBtn.addEventListener('click', nextSong);
-function updatePlayer() {
-    pauseSong();
-    loadSong(songs[currentSong]);
-    playSong();
-}
-
+music.addEventListener('timeupdate', updateProgressBar);
